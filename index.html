@@ -1,850 +1,1177 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anti-Mage Character Viewer</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #0a0d12 0%, #1e1438 100%);
-            overflow: hidden;
-            color: #e9e9ea;
-        }
-
-        #canvas-container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-        }
-
-        #controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(10, 13, 18, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid rgba(142, 94, 255, 0.2);
-            z-index: 10;
-            min-width: 280px;
-        }
-
-        #controls h2 {
-            margin: 0 0 16px 0;
-            font-size: 18px;
-            font-weight: 600;
-            color: #8e5eff;
-        }
-
-        .control-group {
-            margin-bottom: 16px;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #b8b8bb;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 4px;
-            background: #2a2d36;
-            border-radius: 999px;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: #8e5eff;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-right: 8px;
-            cursor: pointer;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        #loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            font-weight: 600;
-            color: #8e5eff;
-            z-index: 5;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anti-Mage 3D - Ultra Detailed</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#0a0d12 0%,#1e1438 100%);overflow:hidden;color:#e9e9ea}#canvas-container{width:100vw;height:100vh;position:relative}#controls{position:absolute;top:20px;left:20px;background:rgba(10,13,18,.9);backdrop-filter:blur(16px);padding:24px;border-radius:20px;border:1px solid rgba(142,94,255,.25);box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:10;min-width:320px;max-height:90vh;overflow-y:auto}#controls h2{margin:0 0 20px 0;font-size:20px;font-weight:700;color:#8e5eff;letter-spacing:-.5px}.control-section{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid rgba(142,94,255,.15)}.control-section:last-child{border-bottom:none;margin-bottom:0}.section-title{font-size:14px;font-weight:600;color:#b8b8bb;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}.control-group{margin-bottom:16px}.control-group:last-child{margin-bottom:0}.control-group label{display:block;margin-bottom:8px;font-size:13px;font-weight:500;color:#b8b8bb}.button-group{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.anim-button{padding:10px 16px;background:rgba(142,94,255,.15);border:1px solid rgba(142,94,255,.3);border-radius:12px;color:#e9e9ea;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s ease}.anim-button:hover{background:rgba(142,94,255,.25);border-color:rgba(142,94,255,.5);transform:translateY(-1px)}.anim-button.active{background:#8e5eff;border-color:#8e5eff;box-shadow:0 4px 12px rgba(142,94,255,.4)}input[type="range"]{width:100%;height:6px;background:rgba(42,45,54,.8);border-radius:999px;outline:none;-webkit-appearance:none;cursor:pointer}input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#8e5eff;border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(142,94,255,.5);transition:transform .2s ease}input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.1)}input[type="range"]::-moz-range-thumb{width:20px;height:20px;background:#8e5eff;border:none;border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(142,94,255,.5)}.slider-row{display:flex;align-items:center;gap:12px}.slider-row input[type="range"]{flex:1}.slider-value{min-width:32px;text-align:right;font-size:13px;font-weight:600;color:#8e5eff}input[type="checkbox"]{width:20px;height:20px;margin-right:10px;cursor:pointer;accent-color:#8e5eff}.checkbox-label{display:flex;align-items:center;cursor:pointer;font-size:14px;font-weight:500;padding:8px 0}.checkbox-label:hover{color:#fff}#loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:28px;font-weight:700;color:#8e5eff;z-index:5;text-shadow:0 0 20px rgba(142,94,255,.8)}
+</style>
 </head>
 <body>
-    <div id="canvas-container"></div>
-    <div id="loading">Loading...</div>
+<div id="canvas-container"></div>
+<div id="loading">Loading Ultra Model...</div>
+<div id="controls">
+<h2>Anti-Mage Ultra 3D</h2>
+<div class="control-section">
+<div class="section-title">Animations</div>
+<div class="button-group">
+<button class="anim-button active" id="animIdle">Idle</button>
+<button class="anim-button" id="animRun">Run</button>
+<button class="anim-button" id="animAttack">Attack</button>
+</div>
+</div>
+<div class="control-section">
+<div class="section-title">Animation Settings</div>
+<div class="control-group">
+<label>Speed</label>
+<div class="slider-row">
+<input type="range" id="animSpeed" min="0.1" max="3" step="0.1" value="1">
+<span class="slider-value" id="animSpeedValue">1.0</span>
+</div>
+</div>
+</div>
+<div class="control-section">
+<div class="section-title">Camera</div>
+<div class="control-group">
+<label class="checkbox-label">
+<input type="checkbox" id="autoRotate">Auto Rotate
+</label>
+</div>
+<div class="control-group">
+<label>Rotation Speed</label>
+<div class="slider-row">
+<input type="range" id="rotationSpeed" min="0.1" max="2" step="0.1" value="0.3">
+<span class="slider-value" id="rotationSpeedValue">0.3</span>
+</div>
+</div>
+</div>
+<div class="control-section">
+<div class="section-title">Display</div>
+<div class="control-group">
+<label class="checkbox-label">
+<input type="checkbox" id="wireframe">Wireframe
+</label>
+</div>
+<div class="control-group">
+<label class="checkbox-label">
+<input type="checkbox" id="skeleton">Show Skeleton
+</label>
+</div>
+<div class="control-group">
+<label class="checkbox-label">
+<input type="checkbox" id="particles" checked>Magic Particles
+</label>
+</div>
+</div>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
+<script type="module">
 
-    <div id="controls">
-        <h2>Anti-Mage Viewer</h2>
+// === CHARACTER CODE ===
+import * as THREE from 'three';
 
-        <div class="control-group">
-            <label>Rotation Speed</label>
-            <input type="range" id="rotationSpeed" min="0" max="2" step="0.1" value="0.5">
-        </div>
+// === Advanced Character with Skeleton and Animations ===
+export class AntiMageCharacter {
+    constructor(scene) {
+        this.scene = scene;
+        this.skeleton = null;
+        this.bones = {};
+        this.meshes = [];
+        this.animations = {};
+        this.currentAnimation = null;
+        this.animationTime = 0;
+        this.animationSpeed = 1.0;
 
-        <div class="control-group">
-            <label>Model Detail</label>
-            <input type="range" id="detailLevel" min="1" max="5" step="1" value="3">
-        </div>
+        this.buildCharacter();
+        this.setupAnimations();
+    }
 
-        <div class="control-group">
-            <label class="checkbox-label">
-                <input type="checkbox" id="wireframe">
-                Wireframe Mode
-            </label>
-        </div>
+    buildCharacter() {
+        // Create skeleton
+        this.createSkeleton();
 
-        <div class="control-group">
-            <label class="checkbox-label">
-                <input type="checkbox" id="autoRotate" checked>
-                Auto Rotate
-            </label>
-        </div>
+        // Create detailed meshes
+        this.createDetailedHead();
+        this.createDetailedTorso();
+        this.createDetailedArms();
+        this.createDetailedLegs();
+        this.createDetailedHair();
+        this.createDetailedArmor();
+        this.createMagicBlades();
 
-        <div class="control-group">
-            <label class="checkbox-label">
-                <input type="checkbox" id="showEffects" checked>
-                Magic Effects
-            </label>
-        </div>
-    </div>
+        // Add accessories
+        this.createTattoos();
+        this.createJewelry();
+    }
 
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+    createSkeleton() {
+        const bones = [];
+
+        // Root
+        const root = new THREE.Bone();
+        root.position.set(0, 0, 0);
+        root.name = 'root';
+        bones.push(root);
+
+        // Hips
+        const hips = new THREE.Bone();
+        hips.position.set(0, 0.9, 0);
+        hips.name = 'hips';
+        root.add(hips);
+        bones.push(hips);
+
+        // Spine
+        const spine1 = new THREE.Bone();
+        spine1.position.set(0, 0.15, 0);
+        spine1.name = 'spine1';
+        hips.add(spine1);
+        bones.push(spine1);
+
+        const spine2 = new THREE.Bone();
+        spine2.position.set(0, 0.15, 0);
+        spine2.name = 'spine2';
+        spine1.add(spine2);
+        bones.push(spine2);
+
+        const chest = new THREE.Bone();
+        chest.position.set(0, 0.15, 0);
+        chest.name = 'chest';
+        spine2.add(chest);
+        bones.push(chest);
+
+        // Neck and Head
+        const neck = new THREE.Bone();
+        neck.position.set(0, 0.15, 0);
+        neck.name = 'neck';
+        chest.add(neck);
+        bones.push(neck);
+
+        const head = new THREE.Bone();
+        head.position.set(0, 0.12, 0);
+        head.name = 'head';
+        neck.add(head);
+        bones.push(head);
+
+        // Left Arm
+        const leftShoulder = new THREE.Bone();
+        leftShoulder.position.set(-0.15, 0.12, 0);
+        leftShoulder.name = 'leftShoulder';
+        chest.add(leftShoulder);
+        bones.push(leftShoulder);
+
+        const leftUpperArm = new THREE.Bone();
+        leftUpperArm.position.set(-0.08, 0, 0);
+        leftUpperArm.name = 'leftUpperArm';
+        leftShoulder.add(leftUpperArm);
+        bones.push(leftUpperArm);
+
+        const leftForearm = new THREE.Bone();
+        leftForearm.position.set(-0.25, 0, 0);
+        leftForearm.name = 'leftForearm';
+        leftUpperArm.add(leftForearm);
+        bones.push(leftForearm);
+
+        const leftHand = new THREE.Bone();
+        leftHand.position.set(-0.2, 0, 0);
+        leftHand.name = 'leftHand';
+        leftForearm.add(leftHand);
+        bones.push(leftHand);
+
+        // Right Arm (mirrored)
+        const rightShoulder = new THREE.Bone();
+        rightShoulder.position.set(0.15, 0.12, 0);
+        rightShoulder.name = 'rightShoulder';
+        chest.add(rightShoulder);
+        bones.push(rightShoulder);
+
+        const rightUpperArm = new THREE.Bone();
+        rightUpperArm.position.set(0.08, 0, 0);
+        rightUpperArm.name = 'rightUpperArm';
+        rightShoulder.add(rightUpperArm);
+        bones.push(rightUpperArm);
+
+        const rightForearm = new THREE.Bone();
+        rightForearm.position.set(0.25, 0, 0);
+        rightForearm.name = 'rightForearm';
+        rightUpperArm.add(rightForearm);
+        bones.push(rightForearm);
+
+        const rightHand = new THREE.Bone();
+        rightHand.position.set(0.2, 0, 0);
+        rightHand.name = 'rightHand';
+        rightForearm.add(rightHand);
+        bones.push(rightHand);
+
+        // Left Leg
+        const leftThigh = new THREE.Bone();
+        leftThigh.position.set(-0.1, 0, 0);
+        leftThigh.name = 'leftThigh';
+        hips.add(leftThigh);
+        bones.push(leftThigh);
+
+        const leftShin = new THREE.Bone();
+        leftShin.position.set(0, -0.45, 0);
+        leftShin.name = 'leftShin';
+        leftThigh.add(leftShin);
+        bones.push(leftShin);
+
+        const leftFoot = new THREE.Bone();
+        leftFoot.position.set(0, -0.45, 0);
+        leftFoot.name = 'leftFoot';
+        leftShin.add(leftFoot);
+        bones.push(leftFoot);
+
+        // Right Leg (mirrored)
+        const rightThigh = new THREE.Bone();
+        rightThigh.position.set(0.1, 0, 0);
+        rightThigh.name = 'rightThigh';
+        hips.add(rightThigh);
+        bones.push(rightThigh);
+
+        const rightShin = new THREE.Bone();
+        rightShin.position.set(0, -0.45, 0);
+        rightShin.name = 'rightShin';
+        rightThigh.add(rightShin);
+        bones.push(rightShin);
+
+        const rightFoot = new THREE.Bone();
+        rightFoot.position.set(0, -0.45, 0);
+        rightFoot.name = 'rightFoot';
+        rightShin.add(rightFoot);
+        bones.push(rightFoot);
+
+        // Create skeleton
+        this.skeleton = new THREE.Skeleton(bones);
+
+        // Store bone references
+        bones.forEach(bone => {
+            this.bones[bone.name] = bone;
+        });
+
+        // Add to scene
+        const skeletonHelper = new THREE.SkeletonHelper(root);
+        skeletonHelper.visible = false;
+        this.scene.add(skeletonHelper);
+        this.skeletonHelper = skeletonHelper;
+
+        this.scene.add(root);
+        this.root = root;
+    }
+
+    createDetailedHead() {
+        // High-poly head
+        const headGeo = new THREE.SphereGeometry(0.15, 128, 128);
+
+        // Modify vertices for more feminine shape
+        const positions = headGeo.attributes.position;
+        for (let i = 0; i < positions.count; i++) {
+            const x = positions.getX(i);
+            const y = positions.getY(i);
+            const z = positions.getZ(i);
+
+            // Narrow chin
+            if (y < -0.05) {
+                const factor = 1 - (y + 0.15) / 0.1;
+                positions.setX(i, x * (1 - factor * 0.3));
+                positions.setZ(i, z * (1 - factor * 0.2));
+            }
+
+            // Defined cheekbones
+            if (y > 0 && y < 0.08 && Math.abs(x) > 0.08) {
+                positions.setX(i, x * 1.15);
+            }
+        }
+        positions.needsUpdate = true;
+        headGeo.computeVertexNormals();
+
+        const skinMat = this.createSkinMaterial();
+        const head = new THREE.SkinnedMesh(headGeo, skinMat);
+        head.castShadow = true;
+        head.receiveShadow = true;
+
+        // Bind to skeleton
+        head.bind(this.skeleton);
+        head.skeleton.bones[0] = this.bones.head;
+
+        this.bones.head.add(head);
+        this.meshes.push(head);
+
+        // Eyes
+        this.createEyes();
+
+        // Face details
+        this.createFaceDetails();
+    }
+
+    createEyes() {
+        const eyeGeo = new THREE.SphereGeometry(0.02, 32, 32);
+        const eyeMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            roughness: 0.3,
+            metalness: 0.1
+        });
+
+        const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+        leftEye.position.set(-0.05, 0.03, 0.13);
+        this.bones.head.add(leftEye);
+
+        const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+        rightEye.position.set(0.05, 0.03, 0.13);
+        this.bones.head.add(rightEye);
+
+        // Pupils
+        const pupilGeo = new THREE.SphereGeometry(0.012, 32, 32);
+        const pupilMat = new THREE.MeshStandardMaterial({
+            color: 0x8e5eff,
+            emissive: 0x6b3fa0,
+            emissiveIntensity: 0.5,
+            roughness: 0.1
+        });
+
+        const leftPupil = new THREE.Mesh(pupilGeo, pupilMat);
+        leftPupil.position.set(-0.05, 0.03, 0.145);
+        this.bones.head.add(leftPupil);
+
+        const rightPupil = new THREE.Mesh(pupilGeo, pupilMat);
+        rightPupil.position.set(0.05, 0.03, 0.145);
+        this.bones.head.add(rightPupil);
+    }
+
+    createFaceDetails() {
+        // Eyebrows
+        const browGeo = new THREE.BoxGeometry(0.04, 0.005, 0.01);
+        const browMat = new THREE.MeshStandardMaterial({
+            color: 0x4a2070,
+            roughness: 0.8
+        });
+
+        const leftBrow = new THREE.Mesh(browGeo, browMat);
+        leftBrow.position.set(-0.05, 0.08, 0.13);
+        leftBrow.rotation.z = -0.2;
+        this.bones.head.add(leftBrow);
+
+        const rightBrow = new THREE.Mesh(browGeo, browMat);
+        rightBrow.position.set(0.05, 0.08, 0.13);
+        rightBrow.rotation.z = 0.2;
+        this.bones.head.add(rightBrow);
+
+        // Lips
+        const lipGeo = new THREE.SphereGeometry(0.03, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const lipMat = new THREE.MeshStandardMaterial({
+            color: 0xc97a7a,
+            roughness: 0.4,
+            metalness: 0.1
+        });
+
+        const lips = new THREE.Mesh(lipGeo, lipMat);
+        lips.position.set(0, -0.05, 0.13);
+        lips.scale.set(1, 0.5, 0.8);
+        this.bones.head.add(lips);
+    }
+
+    createDetailedTorso() {
+        // Create torso with muscle definition
+        const points = [];
+        const segments = 64;
+
+        for (let i = 0; i <= segments; i++) {
+            const t = i / segments;
+            const y = t;
+
+            // Complex shape for torso
+            let radius;
+            if (t < 0.3) { // Hips
+                radius = 0.17 - t * 0.15;
+            } else if (t < 0.6) { // Waist
+                radius = 0.14 - (t - 0.3) * 0.1;
+            } else { // Chest
+                radius = 0.15 + (t - 0.6) * 0.15;
+            }
+
+            points.push(new THREE.Vector2(radius, y * 0.45 - 0.225));
+        }
+
+        const torsoGeo = new THREE.LatheGeometry(points, 128);
+        const skinMat = this.createSkinMaterial();
+        const torso = new THREE.SkinnedMesh(torsoGeo, skinMat);
+        torso.castShadow = true;
+        torso.receiveShadow = true;
+
+        torso.bind(this.skeleton);
+        this.bones.spine1.add(torso);
+        this.meshes.push(torso);
+    }
+
+    createDetailedArms() {
+        ['left', 'right'].forEach(side => {
+            const mult = side === 'left' ? -1 : 1;
+
+            // Upper arm
+            const upperArmGeo = new THREE.CylinderGeometry(0.048, 0.052, 0.25, 64);
+            const skinMat = this.createSkinMaterial();
+            const upperArm = new THREE.SkinnedMesh(upperArmGeo, skinMat);
+            upperArm.castShadow = true;
+            upperArm.rotation.z = Math.PI / 2 * mult;
+            upperArm.position.x = -0.125 * mult;
+
+            upperArm.bind(this.skeleton);
+            this.bones[`${side}UpperArm`].add(upperArm);
+            this.meshes.push(upperArm);
+
+            // Forearm
+            const forearmGeo = new THREE.CylinderGeometry(0.042, 0.045, 0.2, 64);
+            const gloveMat = new THREE.MeshStandardMaterial({
+                color: 0x1a1a1a,
+                roughness: 0.35,
+                metalness: 0.85,
+                envMapIntensity: 1.5
+            });
+            const forearm = new THREE.SkinnedMesh(forearmGeo, gloveMat);
+            forearm.castShadow = true;
+            forearm.rotation.z = Math.PI / 2 * mult;
+            forearm.position.x = -0.1 * mult;
+
+            forearm.bind(this.skeleton);
+            this.bones[`${side}Forearm`].add(forearm);
+            this.meshes.push(forearm);
+
+            // Hand
+            const handGeo = new THREE.SphereGeometry(0.045, 32, 32);
+            const hand = new THREE.SkinnedMesh(handGeo, gloveMat);
+            hand.castShadow = true;
+            hand.scale.set(1, 1.2, 0.8);
+
+            hand.bind(this.skeleton);
+            this.bones[`${side}Hand`].add(hand);
+            this.meshes.push(hand);
+        });
+    }
+
+    createDetailedLegs() {
+        ['left', 'right'].forEach(side => {
+            const mult = side === 'left' ? -1 : 1;
+
+            // Thigh
+            const thighGeo = new THREE.CylinderGeometry(0.075, 0.082, 0.45, 64);
+            const skinMat = this.createSkinMaterial();
+            const thigh = new THREE.SkinnedMesh(thighGeo, skinMat);
+            thigh.castShadow = true;
+            thigh.position.y = -0.225;
+
+            thigh.bind(this.skeleton);
+            this.bones[`${side}Thigh`].add(thigh);
+            this.meshes.push(thigh);
+
+            // Shin with boot
+            const shinGeo = new THREE.CylinderGeometry(0.06, 0.068, 0.45, 64);
+            const bootMat = new THREE.MeshStandardMaterial({
+                color: 0x2a1a4a,
+                roughness: 0.25,
+                metalness: 0.6,
+                envMapIntensity: 1.2
+            });
+            const shin = new THREE.SkinnedMesh(shinGeo, bootMat);
+            shin.castShadow = true;
+            shin.position.y = -0.225;
+
+            shin.bind(this.skeleton);
+            this.bones[`${side}Shin`].add(shin);
+            this.meshes.push(shin);
+
+            // Foot
+            const footGeo = new THREE.BoxGeometry(0.08, 0.06, 0.16);
+            const foot = new THREE.SkinnedMesh(footGeo, bootMat);
+            foot.castShadow = true;
+            foot.position.set(0, -0.03, 0.05);
+
+            foot.bind(this.skeleton);
+            this.bones[`${side}Foot`].add(foot);
+            this.meshes.push(foot);
+        });
+    }
+
+    createDetailedHair() {
+        // Main hair volume
+        const hairGeo = new THREE.SphereGeometry(0.17, 64, 64, 0, Math.PI * 2, 0, Math.PI * 0.65);
+        const hairMat = new THREE.MeshStandardMaterial({
+            color: 0x6b3fa0,
+            roughness: 0.55,
+            metalness: 0.35,
+            emissive: 0x3a1860,
+            emissiveIntensity: 0.25
+        });
+
+        const hair = new THREE.Mesh(hairGeo, hairMat);
+        hair.position.y = 0.08;
+        hair.rotation.z = -0.15;
+        hair.castShadow = true;
+        this.bones.head.add(hair);
+
+        // Hair strands with more detail
+        for (let i = 0; i < 8; i++) {
+            const strandGeo = new THREE.ConeGeometry(0.018, 0.18, 16);
+            const strand = new THREE.Mesh(strandGeo, hairMat);
+            const angle = (i / 8) * Math.PI - Math.PI / 2;
+            const radius = 0.14 + Math.random() * 0.02;
+
+            strand.position.set(
+                Math.cos(angle) * radius,
+                0.03 - i * 0.025,
+                Math.sin(angle) * 0.12
+            );
+            strand.rotation.z = angle + Math.PI / 2 + (Math.random() - 0.5) * 0.3;
+            strand.castShadow = true;
+            this.bones.head.add(strand);
         }
     }
-    </script>
 
-    <script type="module">
-// === Shaders ===
-const glowVertexShader = `
-varying vec3 vNormal;
-varying vec3 vPosition;
+    createDetailedArmor() {
+        // Chest armor
+        const chestGeo = new THREE.SphereGeometry(0.13, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+        const armorMat = new THREE.MeshStandardMaterial({
+            color: 0x6b3fa0,
+            roughness: 0.15,
+            metalness: 0.85,
+            emissive: 0x4a2070,
+            emissiveIntensity: 0.45,
+            envMapIntensity: 2.0
+        });
 
-void main() {
-    vNormal = normalize(normalMatrix * normal);
-    vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        const chest = new THREE.Mesh(chestGeo, armorMat);
+        chest.position.set(0, 0.08, 0.09);
+        chest.scale.set(1.7, 1.3, 1);
+        chest.castShadow = true;
+        this.bones.chest.add(chest);
+
+        // Shoulder guards
+        ['left', 'right'].forEach(side => {
+            const mult = side === 'left' ? -1 : 1;
+            const shoulderGeo = new THREE.SphereGeometry(0.09, 64, 64, 0, Math.PI, 0, Math.PI / 2);
+            const shoulder = new THREE.Mesh(shoulderGeo, armorMat);
+            shoulder.position.set(mult * 0.07, 0.02, 0);
+            shoulder.rotation.z = mult * (-Math.PI / 4);
+            shoulder.castShadow = true;
+            this.bones[`${side}Shoulder`].add(shoulder);
+        });
+
+        // Belt
+        const beltGeo = new THREE.CylinderGeometry(0.175, 0.175, 0.09, 128);
+        const belt = new THREE.Mesh(beltGeo, armorMat);
+        belt.position.y = 0.1;
+        belt.castShadow = true;
+        this.bones.hips.add(belt);
+
+        // Belt gem
+        const gemGeo = new THREE.OctahedronGeometry(0.045);
+        const gemMat = new THREE.MeshStandardMaterial({
+            color: 0x8e5eff,
+            metalness: 0.95,
+            roughness: 0.05,
+            emissive: 0x6b3fa0,
+            emissiveIntensity: 1.2,
+            envMapIntensity: 2.5
+        });
+        const gem = new THREE.Mesh(gemGeo, gemMat);
+        gem.position.set(0, 0.1, 0.19);
+        gem.castShadow = true;
+        this.bones.hips.add(gem);
+
+        // Waist cloth panels
+        this.createClothPanels();
+    }
+
+    createClothPanels() {
+        const clothMat = new THREE.MeshStandardMaterial({
+            color: 0x6b3fa0,
+            roughness: 0.45,
+            metalness: 0.25,
+            side: THREE.DoubleSide
+        });
+
+        // Front panel
+        const frontGeo = new THREE.ConeGeometry(0.23, 0.38, 12);
+        const front = new THREE.Mesh(frontGeo, clothMat);
+        front.position.set(0, -0.09, 0.06);
+        front.castShadow = true;
+        this.bones.hips.add(front);
+
+        // Back panel
+        const backGeo = new THREE.ConeGeometry(0.19, 0.28, 12);
+        const back = new THREE.Mesh(backGeo, clothMat);
+        back.position.set(0, -0.04, -0.06);
+        back.castShadow = true;
+        this.bones.hips.add(back);
+
+        // Side panels
+        [-0.16, 0.16].forEach(x => {
+            const sideGeo = new THREE.ConeGeometry(0.09, 0.22, 8);
+            const side = new THREE.Mesh(sideGeo, clothMat);
+            side.position.set(x, 0, 0);
+            side.rotation.z = x < 0 ? -0.35 : 0.35;
+            side.castShadow = true;
+            this.bones.hips.add(side);
+        });
+    }
+
+    createMagicBlades() {
+        ['left', 'right'].forEach(side => {
+            const mult = side === 'left' ? -1 : 1;
+
+            // Handle
+            const handleGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.28, 24);
+            const handleMat = new THREE.MeshStandardMaterial({
+                color: 0x0a0a0a,
+                roughness: 0.25,
+                metalness: 0.95
+            });
+            const handle = new THREE.Mesh(handleGeo, handleMat);
+            handle.rotation.z = Math.PI / 2;
+            handle.position.x = mult * 0.05;
+            handle.castShadow = true;
+            this.bones[`${side}Hand`].add(handle);
+
+            // Blade
+            const bladeCurve = new THREE.Shape();
+            bladeCurve.moveTo(0, 0);
+            bladeCurve.quadraticCurveTo(0.15, 0.12, 0.32, 0.32);
+            bladeCurve.quadraticCurveTo(0.38, 0.43, 0.32, 0.54);
+            bladeCurve.lineTo(0.27, 0.52);
+            bladeCurve.quadraticCurveTo(0.32, 0.41, 0.27, 0.3);
+            bladeCurve.quadraticCurveTo(0.12, 0.1, 0, 0);
+
+            const bladeGeo = new THREE.ExtrudeGeometry(bladeCurve, {
+                depth: 0.025,
+                bevelEnabled: true,
+                bevelThickness: 0.012,
+                bevelSize: 0.012,
+                bevelSegments: 8
+            });
+
+            const bladeMat = this.createBladeMaterial();
+            const blade = new THREE.Mesh(bladeGeo, bladeMat);
+            blade.rotation.z = mult < 0 ? Math.PI / 2.3 : -Math.PI / 2.3;
+            blade.position.set(mult * 0.18, 0, 0);
+            blade.castShadow = true;
+            this.bones[`${side}Hand`].add(blade);
+
+            this[`${side}Blade`] = blade;
+        });
+    }
+
+    createTattoos() {
+        // Arm tattoos (purple magic runes)
+        ['left', 'right'].forEach(side => {
+            for (let i = 0; i < 3; i++) {
+                const tattooGeo = new THREE.RingGeometry(0.02, 0.025, 32);
+                const tattooMat = new THREE.MeshBasicMaterial({
+                    color: 0x8e5eff,
+                    transparent: true,
+                    opacity: 0.6,
+                    side: THREE.DoubleSide
+                });
+                const tattoo = new THREE.Mesh(tattooGeo, tattooMat);
+                tattoo.rotation.x = Math.PI / 2;
+                tattoo.position.y = -0.1 - i * 0.08;
+                this.bones[`${side}UpperArm`].add(tattoo);
+            }
+        });
+    }
+
+    createJewelry() {
+        // Choker
+        const chokerGeo = new THREE.TorusGeometry(0.082, 0.018, 24, 64);
+        const metalMat = new THREE.MeshStandardMaterial({
+            color: 0x1a1a1a,
+            roughness: 0.2,
+            metalness: 0.95
+        });
+        const choker = new THREE.Mesh(chokerGeo, metalMat);
+        choker.rotation.x = Math.PI / 2;
+        choker.position.y = -0.08;
+        choker.castShadow = true;
+        this.bones.neck.add(choker);
+
+        // Earrings
+        [-1, 1].forEach(mult => {
+            const earringGeo = new THREE.CylinderGeometry(0.008, 0.012, 0.04, 16);
+            const earring = new THREE.Mesh(earringGeo, metalMat);
+            earring.position.set(mult * 0.12, -0.02, 0.05);
+            earring.castShadow = true;
+            this.bones.head.add(earring);
+        });
+    }
+
+    createSkinMaterial() {
+        return new THREE.MeshStandardMaterial({
+            color: 0xd4a574,
+            roughness: 0.65,
+            metalness: 0.08,
+            envMapIntensity: 0.8
+        });
+    }
+
+    createBladeMaterial() {
+        return new THREE.MeshStandardMaterial({
+            color: 0x8e5eff,
+            roughness: 0.08,
+            metalness: 0.95,
+            emissive: 0x6b3fa0,
+            emissiveIntensity: 0.6,
+            envMapIntensity: 2.5,
+            transparent: true,
+            opacity: 0.95
+        });
+    }
+
+    setupAnimations() {
+        this.animations.idle = this.createIdleAnimation();
+        this.animations.run = this.createRunAnimation();
+        this.animations.attack = this.createAttackAnimation();
+
+        this.currentAnimation = 'idle';
+    }
+
+    createIdleAnimation() {
+        return {
+            duration: 2.0,
+            loop: true,
+            keyframes: (t) => {
+                const breath = Math.sin(t * Math.PI * 2) * 0.02;
+                this.bones.chest.rotation.x = breath;
+                this.bones.spine1.rotation.x = breath * 0.5;
+
+                // Subtle sway
+                const sway = Math.sin(t * Math.PI * 2 * 0.5) * 0.05;
+                this.bones.hips.rotation.y = sway;
+            }
+        };
+    }
+
+    createRunAnimation() {
+        return {
+            duration: 0.6,
+            loop: true,
+            keyframes: (t) => {
+                const cycle = t * Math.PI * 2;
+
+                // Lean forward
+                this.bones.spine1.rotation.x = 0.3;
+                this.bones.chest.rotation.x = 0.2;
+
+                // Bob
+                this.bones.hips.position.y = 0.9 + Math.abs(Math.sin(cycle)) * 0.08;
+
+                // Legs
+                const leftLegAngle = Math.sin(cycle) * 1.2;
+                const rightLegAngle = Math.sin(cycle + Math.PI) * 1.2;
+
+                this.bones.leftThigh.rotation.x = leftLegAngle;
+                this.bones.rightThigh.rotation.x = rightLegAngle;
+
+                this.bones.leftShin.rotation.x = Math.max(0, -leftLegAngle * 1.5);
+                this.bones.rightShin.rotation.x = Math.max(0, -rightLegAngle * 1.5);
+
+                // Arms counterswing
+                this.bones.leftUpperArm.rotation.x = -rightLegAngle * 0.8;
+                this.bones.rightUpperArm.rotation.x = -leftLegAngle * 0.8;
+
+                this.bones.leftForearm.rotation.x = Math.max(0, rightLegAngle * 0.5);
+                this.bones.rightForearm.rotation.x = Math.max(0, leftLegAngle * 0.5);
+            }
+        };
+    }
+
+    createAttackAnimation() {
+        return {
+            duration: 1.2,
+            loop: false,
+            keyframes: (t) => {
+                if (t < 0.2) {
+                    // Wind up
+                    const prep = t / 0.2;
+                    this.bones.spine2.rotation.y = -0.8 * prep;
+                    this.bones.chest.rotation.y = -0.6 * prep;
+                    this.bones.rightUpperArm.rotation.x = -1.5 * prep;
+                    this.bones.rightUpperArm.rotation.y = -0.8 * prep;
+                    this.bones.rightForearm.rotation.x = 1.2 * prep;
+                } else if (t < 0.4) {
+                    // Strike 1
+                    const strike = (t - 0.2) / 0.2;
+                    const ease = 1 - Math.pow(1 - strike, 3);
+                    this.bones.spine2.rotation.y = -0.8 + 1.6 * ease;
+                    this.bones.chest.rotation.y = -0.6 + 1.2 * ease;
+                    this.bones.rightUpperArm.rotation.x = -1.5 + 2.0 * ease;
+                    this.bones.rightUpperArm.rotation.y = -0.8 + 1.6 * ease;
+                    this.bones.rightForearm.rotation.x = 1.2 - 1.2 * ease;
+                } else if (t < 0.55) {
+                    // Transition
+                    const trans = (t - 0.4) / 0.15;
+                    this.bones.spine2.rotation.y = 0.8 - 1.4 * trans;
+                    this.bones.leftUpperArm.rotation.x = -1.3 * trans;
+                    this.bones.leftForearm.rotation.x = 1.1 * trans;
+                } else if (t < 0.75) {
+                    // Strike 2
+                    const strike2 = (t - 0.55) / 0.2;
+                    const ease2 = 1 - Math.pow(1 - strike2, 3);
+                    this.bones.spine2.rotation.y = -0.6 + 1.4 * ease2;
+                    this.bones.leftUpperArm.rotation.x = -1.3 + 1.8 * ease2;
+                    this.bones.leftForearm.rotation.x = 1.1 - 1.1 * ease2;
+                } else {
+                    // Recovery
+                    const recover = (t - 0.75) / 0.45;
+                    const easeOut = 1 - Math.pow(1 - recover, 2);
+                    this.bones.spine2.rotation.y *= (1 - easeOut);
+                    this.bones.chest.rotation.y *= (1 - easeOut);
+                    this.bones.leftUpperArm.rotation.x *= (1 - easeOut);
+                    this.bones.rightUpperArm.rotation.x *= (1 - easeOut);
+                }
+            }
+        };
+    }
+
+    playAnimation(name) {
+        if (this.animations[name]) {
+            this.currentAnimation = name;
+            this.animationTime = 0;
+        }
+    }
+
+    update(deltaTime) {
+        if (!this.currentAnimation || !this.animations[this.currentAnimation]) return;
+
+        const anim = this.animations[this.currentAnimation];
+        this.animationTime += deltaTime * this.animationSpeed;
+
+        if (anim.loop) {
+            this.animationTime = this.animationTime % anim.duration;
+        } else {
+            this.animationTime = Math.min(this.animationTime, anim.duration);
+        }
+
+        const t = this.animationTime / anim.duration;
+
+        // Reset rotations
+        Object.values(this.bones).forEach(bone => {
+            bone.rotation.set(0, 0, 0);
+            if (bone.name === 'hips') {
+                bone.position.y = 0.9;
+            }
+        });
+
+        anim.keyframes(t);
+
+        // Update skeleton
+        if (this.skeleton) {
+            this.skeleton.update();
+        }
+    }
+
+    toggleWireframe(enabled) {
+        this.meshes.forEach(mesh => {
+            if (mesh.material) {
+                mesh.material.wireframe = enabled;
+            }
+        });
+    }
+
+    toggleSkeleton(enabled) {
+        if (this.skeletonHelper) {
+            this.skeletonHelper.visible = enabled;
+        }
+    }
+
+    setAnimationSpeed(speed) {
+        this.animationSpeed = speed;
+    }
 }
-`;
 
-const glowFragmentShader = `
-uniform vec3 glowColor;
-uniform float glowIntensity;
-varying vec3 vNormal;
-varying vec3 vPosition;
 
-void main() {
-    vec3 viewDirection = normalize(-vPosition);
-    float fresnel = pow(1.0 - dot(viewDirection, vNormal), 3.0);
-    vec3 glow = glowColor * fresnel * glowIntensity;
-
-    gl_FragColor = vec4(glow, fresnel * 0.8);
-}
-`;
-
-const magicBladeVertexShader = `
-varying vec2 vUv;
-varying vec3 vNormal;
-varying vec3 vPosition;
-uniform float time;
-
-void main() {
-    vUv = uv;
-    vNormal = normalize(normalMatrix * normal);
-    vPosition = position;
-
-    vec3 pos = position;
-    pos.y += sin(position.x * 5.0 + time * 2.0) * 0.02;
-
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-}
-`;
-
-const magicBladeFragmentShader = `
-uniform vec3 baseColor;
-uniform vec3 glowColor;
-uniform float time;
-varying vec2 vUv;
-varying vec3 vNormal;
-varying vec3 vPosition;
-
-void main() {
-    float flow = sin(vUv.y * 10.0 - time * 3.0) * 0.5 + 0.5;
-    float edge = pow(1.0 - abs(vUv.x - 0.5) * 2.0, 2.0);
-    vec3 color = mix(baseColor, glowColor, flow * edge);
-    float alpha = 0.9 + edge * 0.1;
-
-    gl_FragColor = vec4(color, alpha);
-}
-`;
-
-const runeVertexShader = `
-varying vec2 vUv;
-varying vec3 vPosition;
-
-void main() {
-    vUv = uv;
-    vPosition = position;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-}
-`;
-
-const runeFragmentShader = `
-uniform float time;
-uniform vec3 runeColor;
-varying vec2 vUv;
-varying vec3 vPosition;
-
-float runePattern(vec2 uv) {
-    vec2 center = vec2(0.5, 0.5);
-    float dist = length(uv - center);
-    float circle = smoothstep(0.4, 0.35, dist);
-    circle -= smoothstep(0.35, 0.3, dist);
-    float angle = atan(uv.y - center.y, uv.x - center.x);
-    float lines = step(0.9, sin(angle * 8.0 + time));
-    float symbols = step(0.95, sin(dist * 20.0 - time * 2.0));
-    return max(circle, max(lines * 0.5, symbols * 0.3));
-}
-
-void main() {
-    float pattern = runePattern(vUv);
-    float pulse = sin(time * 2.0) * 0.3 + 0.7;
-    vec3 color = runeColor * pattern * pulse;
-    float alpha = pattern * pulse;
-    gl_FragColor = vec4(color, alpha);
-}
-`;
-
-const skinVertexShader = `
-varying vec3 vNormal;
-varying vec3 vPosition;
-varying vec2 vUv;
-
-void main() {
-    vNormal = normalize(normalMatrix * normal);
-    vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-}
-`;
-
-const skinFragmentShader = `
-uniform vec3 skinColor;
-uniform float roughness;
-varying vec3 vNormal;
-varying vec3 vPosition;
-varying vec2 vUv;
-
-float noise(vec2 uv) {
-    return fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
-}
-
-void main() {
-    vec3 viewDirection = normalize(-vPosition);
-    vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
-    float diff = max(dot(vNormal, lightDir), 0.0);
-    vec3 reflectDir = reflect(-lightDir, vNormal);
-    float spec = pow(max(dot(viewDirection, reflectDir), 0.0), 32.0);
-    float backLight = max(0.0, dot(-lightDir, vNormal));
-    vec3 subsurface = skinColor * backLight * 0.3;
-    float detail = noise(vUv * 50.0) * 0.05;
-    vec3 color = skinColor * (diff + 0.2) + spec * 0.3 + subsurface;
-    color += detail;
-    gl_FragColor = vec4(color, 1.0);
-}
-`;
-
-// === Main Application ===
+// === APP CODE ===
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
+// Scene setup
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a0d12);
-scene.fog = new THREE.Fog(0x1e1438, 10, 50);
+scene.fog = new THREE.FogExp2(0x1e1438, 0.08);
 
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 1.6, 5);
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 1.6, 4);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: 'high-performance'
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
+renderer.toneMappingExposure = 1.3;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
+// Post-processing
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    0.8, // strength
+    0.4, // radius
+    0.85 // threshold
+);
+composer.addPass(bloomPass);
+
+const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
+composer.addPass(smaaPass);
+
+// Controls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.minDistance = 2;
-controls.maxDistance = 15;
-controls.maxPolarAngle = Math.PI / 1.5;
+controls.dampingFactor = 0.08;
+controls.minDistance = 1.5;
+controls.maxDistance = 10;
+controls.maxPolarAngle = Math.PI / 1.8;
+controls.target.set(0, 1.2, 0);
 
-const ambientLight = new THREE.AmbientLight(0x8e5eff, 0.3);
+// Enhanced Lighting
+const ambientLight = new THREE.AmbientLight(0x6b3fa0, 0.4);
 scene.add(ambientLight);
 
-const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
-mainLight.position.set(5, 8, 5);
+const mainLight = new THREE.DirectionalLight(0xffffff, 2.5);
+mainLight.position.set(6, 10, 6);
 mainLight.castShadow = true;
-mainLight.shadow.mapSize.width = 2048;
-mainLight.shadow.mapSize.height = 2048;
+mainLight.shadow.mapSize.width = 4096;
+mainLight.shadow.mapSize.height = 4096;
+mainLight.shadow.camera.near = 0.5;
+mainLight.shadow.camera.far = 50;
+mainLight.shadow.camera.left = -5;
+mainLight.shadow.camera.right = 5;
+mainLight.shadow.camera.top = 5;
+mainLight.shadow.camera.bottom = -5;
+mainLight.shadow.bias = -0.0001;
 scene.add(mainLight);
 
-const rimLight = new THREE.DirectionalLight(0x8e5eff, 0.8);
-rimLight.position.set(-5, 3, -5);
-scene.add(rimLight);
+const rimLight1 = new THREE.DirectionalLight(0x8e5eff, 1.5);
+rimLight1.position.set(-6, 4, -6);
+scene.add(rimLight1);
 
-const fillLight = new THREE.DirectionalLight(0x4a2eb0, 0.5);
-fillLight.position.set(0, -2, 3);
+const rimLight2 = new THREE.DirectionalLight(0x6b3fa0, 1.0);
+rimLight2.position.set(0, -3, 5);
+scene.add(rimLight2);
+
+const fillLight = new THREE.PointLight(0x8e5eff, 1.5, 10);
+fillLight.position.set(0, 1.5, 2);
 scene.add(fillLight);
 
-const groundGeometry = new THREE.CircleGeometry(8, 64);
-const groundMaterial = new THREE.MeshStandardMaterial({
+// Environment Map
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+scene.environment = pmremGenerator.fromScene(
+    new THREE.RoomEnvironment(), 0.04
+).texture;
+
+// Ground with detail
+const groundGeo = new THREE.CircleGeometry(10, 128);
+const groundMat = new THREE.MeshStandardMaterial({
     color: 0x1a1a2e,
-    roughness: 0.8,
-    metalness: 0.2
+    roughness: 0.85,
+    metalness: 0.15,
+    envMapIntensity: 0.5
 });
-const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-class AntiMageCharacter {
-    constructor(detailLevel = 3) {
-        this.group = new THREE.Group();
-        this.detailLevel = detailLevel;
-        this.clock = new THREE.Clock();
-        this.blades = [];
-        this.build();
-    }
+// Ground grid pattern
+const gridHelper = new THREE.GridHelper(10, 40, 0x4a2070, 0x2a1545);
+gridHelper.material.opacity = 0.3;
+gridHelper.material.transparent = true;
+scene.add(gridHelper);
 
-    build() {
-        while(this.group.children.length > 0) {
-            this.group.remove(this.group.children[0]);
-        }
-        this.blades = [];
+// Magic particles system
+class MagicParticles {
+    constructor(count = 100) {
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(count * 3);
+        const velocities = [];
+        const lifetimes = [];
 
-        const skinMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                skinColor: { value: new THREE.Color(0xd4a574) },
-                roughness: { value: 0.6 }
-            },
-            vertexShader: skinVertexShader,
-            fragmentShader: skinFragmentShader
-        });
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 0.5 + Math.random() * 1.5;
+            positions[i * 3] = Math.cos(angle) * radius;
+            positions[i * 3 + 1] = Math.random() * 3;
+            positions[i * 3 + 2] = Math.sin(angle) * radius;
 
-        const purpleMaterial = new THREE.MeshStandardMaterial({
-            color: 0x6b3fa0,
-            roughness: 0.2,
-            metalness: 0.7,
-            emissive: 0x4a2070,
-            emissiveIntensity: 0.4
-        });
-
-        const blackMaterial = new THREE.MeshStandardMaterial({
-            color: 0x1a1a1a,
-            roughness: 0.3,
-            metalness: 0.9
-        });
-
-        const hairMaterial = new THREE.MeshStandardMaterial({
-            color: 0x6b3fa0,
-            roughness: 0.6,
-            metalness: 0.3,
-            emissive: 0x3a1860,
-            emissiveIntensity: 0.2
-        });
-
-        // Head
-        const headGeometry = new THREE.SphereGeometry(0.15, 64, 64);
-        const head = new THREE.Mesh(headGeometry, skinMaterial);
-        head.position.y = 1.65;
-        head.scale.set(1, 1.15, 0.95);
-        head.castShadow = true;
-        head.receiveShadow = true;
-        this.group.add(head);
-
-        // Neck
-        const neckGeo = new THREE.CylinderGeometry(0.06, 0.065, 0.12, 32);
-        const neck = new THREE.Mesh(neckGeo, skinMaterial);
-        neck.position.y = 1.52;
-        neck.castShadow = true;
-        this.group.add(neck);
-
-        this.createHair(hairMaterial);
-
-        const torsoGeometry = this.createTorsoGeometry();
-        const torso = new THREE.Mesh(torsoGeometry, skinMaterial);
-        torso.position.y = 1.25;
-        torso.castShadow = true;
-        torso.receiveShadow = true;
-        this.group.add(torso);
-
-        this.createChestArmor(purpleMaterial);
-
-        const collarGeo = new THREE.TorusGeometry(0.08, 0.015, 16, 32);
-        const collar = new THREE.Mesh(collarGeo, blackMaterial);
-        collar.position.y = 1.58;
-        collar.rotation.x = Math.PI / 2;
-        collar.castShadow = true;
-        this.group.add(collar);
-
-        this.createShoulderGuard(-0.22, purpleMaterial);
-        this.createShoulderGuard(0.22, purpleMaterial);
-        this.createBelt(purpleMaterial, blackMaterial);
-        this.createWaistCloth(purpleMaterial);
-        this.createArm(-0.25, true);
-        this.createArm(0.25, false);
-        this.createLeg(-0.1, true);
-        this.createLeg(0.1, false);
-        this.createBlade(-0.5, true);
-        this.createBlade(0.5, false);
-        this.addGlowEffects();
-    }
-
-    createTorsoGeometry() {
-        const points = [];
-        const segments = 32;
-        for (let i = 0; i <= segments; i++) {
-            const t = i / segments;
-            const y = t - 0.5;
-            let radius = 0.18 - Math.abs(y) * 0.15;
-            if (t > 0.7) radius += (t - 0.7) * 0.1;
-            points.push(new THREE.Vector2(radius, y * 0.5));
-        }
-        return new THREE.LatheGeometry(points, 64);
-    }
-
-    createHair(material) {
-        const hairGeo = new THREE.SphereGeometry(0.17, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.6);
-        const hair = new THREE.Mesh(hairGeo, material);
-        hair.position.y = 1.7;
-        hair.rotation.z = -0.2;
-        hair.castShadow = true;
-        this.group.add(hair);
-
-        for (let i = 0; i < 5; i++) {
-            const strandGeo = new THREE.ConeGeometry(0.02, 0.15, 8);
-            const strand = new THREE.Mesh(strandGeo, material);
-            const angle = (i / 5) * Math.PI - Math.PI / 2;
-            strand.position.set(
-                Math.cos(angle) * 0.15,
-                1.65 - i * 0.03,
-                Math.sin(angle) * 0.1
-            );
-            strand.rotation.z = angle + Math.PI / 2;
-            strand.castShadow = true;
-            this.group.add(strand);
-        }
-    }
-
-    createChestArmor(material) {
-        const chestGeo = new THREE.SphereGeometry(0.12, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const chest = new THREE.Mesh(chestGeo, material);
-        chest.position.set(0, 1.38, 0.08);
-        chest.scale.set(1.6, 1.2, 1);
-        chest.castShadow = true;
-        this.group.add(chest);
-
-        const runeGeo = new THREE.PlaneGeometry(0.1, 0.1);
-        const runeMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                time: { value: 0 },
-                runeColor: { value: new THREE.Color(0x8e5eff) }
-            },
-            vertexShader: runeVertexShader,
-            fragmentShader: runeFragmentShader,
-            transparent: true,
-            side: THREE.DoubleSide
-        });
-
-        const rune = new THREE.Mesh(runeGeo, runeMaterial);
-        rune.position.set(0, 1.38, 0.18);
-        this.group.add(rune);
-        this.rune = rune;
-    }
-
-    createShoulderGuard(xOffset, material) {
-        const shoulderGeo = new THREE.SphereGeometry(0.08, 32, 32, 0, Math.PI, 0, Math.PI / 2);
-        const shoulder = new THREE.Mesh(shoulderGeo, material);
-        shoulder.position.set(xOffset, 1.42, 0);
-        shoulder.rotation.z = xOffset < 0 ? -Math.PI / 4 : Math.PI / 4;
-        shoulder.castShadow = true;
-        this.group.add(shoulder);
-    }
-
-    createBelt(purpleMat, blackMat) {
-        const beltGeo = new THREE.CylinderGeometry(0.17, 0.17, 0.08, 64);
-        const belt = new THREE.Mesh(beltGeo, purpleMat);
-        belt.position.y = 1.0;
-        belt.castShadow = true;
-        this.group.add(belt);
-
-        const gemGeo = new THREE.OctahedronGeometry(0.04);
-        const gemMat = new THREE.MeshStandardMaterial({
-            color: 0x8e5eff,
-            metalness: 0.9,
-            roughness: 0.1,
-            emissive: 0x6b3fa0,
-            emissiveIntensity: 0.8
-        });
-        const gem = new THREE.Mesh(gemGeo, gemMat);
-        gem.position.set(0, 1.0, 0.18);
-        gem.castShadow = true;
-        this.group.add(gem);
-    }
-
-    createWaistCloth(material) {
-        const clothGeo = new THREE.ConeGeometry(0.22, 0.35, 8);
-        const cloth = new THREE.Mesh(clothGeo, material);
-        cloth.position.set(0, 0.82, 0.05);
-        cloth.castShadow = true;
-        this.group.add(cloth);
-
-        const backClothGeo = new THREE.ConeGeometry(0.18, 0.25, 8);
-        const backCloth = new THREE.Mesh(backClothGeo, material);
-        backCloth.position.set(0, 0.87, -0.05);
-        backCloth.castShadow = true;
-        this.group.add(backCloth);
-
-        [-0.15, 0.15].forEach(x => {
-            const sideGeo = new THREE.ConeGeometry(0.08, 0.2, 6);
-            const side = new THREE.Mesh(sideGeo, material);
-            side.position.set(x, 0.9, 0);
-            side.rotation.z = x < 0 ? -0.3 : 0.3;
-            side.castShadow = true;
-            this.group.add(side);
-        });
-    }
-
-    addGlowEffects() {
-        const glowMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                glowColor: { value: new THREE.Color(0x8e5eff) },
-                glowIntensity: { value: 0.5 }
-            },
-            vertexShader: glowVertexShader,
-            fragmentShader: glowFragmentShader,
-            side: THREE.BackSide,
-            blending: THREE.AdditiveBlending,
-            transparent: true
-        });
-
-        const glowGeo = new THREE.SphereGeometry(0.16, 32, 32);
-        const glow = new THREE.Mesh(glowGeo, glowMaterial);
-        glow.position.y = 1.65;
-        glow.scale.set(1.2, 1.3, 1.1);
-        this.group.add(glow);
-    }
-
-    update() {
-        const time = this.clock.getElapsedTime();
-        if (this.rune && this.rune.material.uniforms) {
-            this.rune.material.uniforms.time.value = time;
-        }
-        if (this.blades) {
-            this.blades.forEach(blade => {
-                if (blade.material.uniforms && blade.material.uniforms.time) {
-                    blade.material.uniforms.time.value = time;
-                }
+            velocities.push({
+                x: (Math.random() - 0.5) * 0.02,
+                y: Math.random() * 0.03 + 0.02,
+                z: (Math.random() - 0.5) * 0.02
             });
+
+            lifetimes.push(Math.random());
         }
-    }
 
-    createArm(xOffset, isLeft) {
-        const skinMaterial = new THREE.MeshStandardMaterial({
-            color: 0xd4a574,
-            roughness: 0.6,
-            metalness: 0.1
-        });
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-        const blackMaterial = new THREE.MeshStandardMaterial({
-            color: 0x1a1a1a,
-            roughness: 0.4,
-            metalness: 0.8
-        });
-
-        const purpleMaterial = new THREE.MeshStandardMaterial({
-            color: 0x6b3fa0,
-            roughness: 0.3,
-            metalness: 0.6,
-            emissive: 0x4a2070,
-            emissiveIntensity: 0.3
-        });
-
-        const upperArmGeo = new THREE.CylinderGeometry(0.045, 0.05, 0.35, 16 * this.detailLevel);
-        const upperArm = new THREE.Mesh(upperArmGeo, skinMaterial);
-        upperArm.position.set(xOffset, 1.25, 0);
-        upperArm.rotation.z = isLeft ? 0.3 : -0.3;
-        upperArm.castShadow = true;
-        this.group.add(upperArm);
-
-        const bandGeo = new THREE.CylinderGeometry(0.051, 0.051, 0.04, 16);
-        const band = new THREE.Mesh(bandGeo, purpleMaterial);
-        band.position.set(xOffset * 1.2, 1.15, 0);
-        band.rotation.z = isLeft ? 0.3 : -0.3;
-        band.castShadow = true;
-        this.group.add(band);
-
-        const forearmGeo = new THREE.CylinderGeometry(0.04, 0.045, 0.35, 16 * this.detailLevel);
-        const forearm = new THREE.Mesh(forearmGeo, blackMaterial);
-        forearm.position.set(xOffset * 1.5, 0.85, 0);
-        forearm.rotation.z = isLeft ? 0.2 : -0.2;
-        forearm.castShadow = true;
-        this.group.add(forearm);
-
-        const handGeo = new THREE.SphereGeometry(0.045, 16 * this.detailLevel, 16 * this.detailLevel);
-        const hand = new THREE.Mesh(handGeo, blackMaterial);
-        hand.position.set(xOffset * 1.8, 0.65, 0);
-        hand.castShadow = true;
-        this.group.add(hand);
-    }
-
-    createLeg(xOffset, isLeft) {
-        const skinMaterial = new THREE.MeshStandardMaterial({
-            color: 0xd4a574,
-            roughness: 0.6,
-            metalness: 0.1
-        });
-
-        const bootMaterial = new THREE.MeshStandardMaterial({
-            color: 0x2a1a4a,
-            roughness: 0.3,
-            metalness: 0.5
-        });
-
-        const thighGeo = new THREE.CylinderGeometry(0.08, 0.07, 0.45, 16 * this.detailLevel);
-        const thigh = new THREE.Mesh(thighGeo, skinMaterial);
-        thigh.position.set(xOffset, 0.65, 0);
-        thigh.castShadow = true;
-        this.group.add(thigh);
-
-        const shinGeo = new THREE.CylinderGeometry(0.06, 0.07, 0.45, 16 * this.detailLevel);
-        const shin = new THREE.Mesh(shinGeo, bootMaterial);
-        shin.position.set(xOffset, 0.2, 0);
-        shin.castShadow = true;
-        this.group.add(shin);
-
-        const footGeo = new THREE.BoxGeometry(0.08, 0.06, 0.15);
-        const foot = new THREE.Mesh(footGeo, bootMaterial);
-        foot.position.set(xOffset, 0.03, 0.04);
-        foot.castShadow = true;
-        this.group.add(foot);
-    }
-
-    createBlade(xOffset, isLeft) {
-        const handleGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.25, 12 * this.detailLevel);
-        const handleMat = new THREE.MeshStandardMaterial({
-            color: 0x1a1a1a,
-            roughness: 0.3,
-            metalness: 0.9
-        });
-        const handle = new THREE.Mesh(handleGeo, handleMat);
-        handle.position.set(xOffset * 2, 0.65, 0);
-        handle.rotation.z = isLeft ? Math.PI / 4 : -Math.PI / 4;
-        handle.castShadow = true;
-        this.group.add(handle);
-
-        const bladeCurve = new THREE.Shape();
-        bladeCurve.moveTo(0, 0);
-        bladeCurve.quadraticCurveTo(0.15, 0.1, 0.3, 0.3);
-        bladeCurve.quadraticCurveTo(0.35, 0.4, 0.3, 0.5);
-        bladeCurve.lineTo(0.25, 0.48);
-        bladeCurve.quadraticCurveTo(0.3, 0.38, 0.25, 0.28);
-        bladeCurve.quadraticCurveTo(0.1, 0.08, 0, 0);
-
-        const bladeGeo = new THREE.ExtrudeGeometry(bladeCurve, {
-            depth: 0.02,
-            bevelEnabled: true,
-            bevelThickness: 0.01,
-            bevelSize: 0.01,
-            bevelSegments: 4 * this.detailLevel
-        });
-
-        const bladeMat = new THREE.ShaderMaterial({
-            uniforms: {
-                baseColor: { value: new THREE.Color(0x8e5eff) },
-                glowColor: { value: new THREE.Color(0xffffff) },
-                time: { value: 0 }
-            },
-            vertexShader: magicBladeVertexShader,
-            fragmentShader: magicBladeFragmentShader,
-            transparent: true
-        });
-
-        const blade = new THREE.Mesh(bladeGeo, bladeMat);
-        blade.position.copy(handle.position);
-        blade.position.y -= 0.15;
-        blade.rotation.z = isLeft ? Math.PI / 2.5 : -Math.PI / 2.5;
-        blade.castShadow = true;
-        this.group.add(blade);
-        this.blades.push(blade);
-    }
-}
-
-class MagicEffects {
-    constructor() {
-        this.group = new THREE.Group();
-        this.particles = [];
-        this.createParticles();
-    }
-
-    createParticles() {
-        const particleGeometry = new THREE.SphereGeometry(0.02, 8, 8);
-        const particleMaterial = new THREE.MeshBasicMaterial({
+        const material = new THREE.PointsMaterial({
             color: 0x8e5eff,
+            size: 0.05,
             transparent: true,
-            opacity: 0.6
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
         });
 
-        for (let i = 0; i < 50; i++) {
-            const particle = new THREE.Mesh(particleGeometry, particleMaterial.clone());
-            const angle = (i / 50) * Math.PI * 2;
-            const radius = 0.5 + Math.random() * 0.5;
-
-            particle.position.set(
-                Math.cos(angle) * radius,
-                Math.random() * 2,
-                Math.sin(angle) * radius
-            );
-
-            particle.userData.velocity = {
-                x: (Math.random() - 0.5) * 0.01,
-                y: Math.random() * 0.02 + 0.01,
-                z: (Math.random() - 0.5) * 0.01
-            };
-
-            particle.userData.life = Math.random();
-
-            this.particles.push(particle);
-            this.group.add(particle);
-        }
+        this.particles = new THREE.Points(geometry, material);
+        this.velocities = velocities;
+        this.lifetimes = lifetimes;
+        this.count = count;
+        scene.add(this.particles);
     }
 
     update() {
-        this.particles.forEach(particle => {
-            particle.position.x += particle.userData.velocity.x;
-            particle.position.y += particle.userData.velocity.y;
-            particle.position.z += particle.userData.velocity.z;
+        const positions = this.particles.geometry.attributes.position.array;
 
-            particle.userData.life += 0.01;
+        for (let i = 0; i < this.count; i++) {
+            positions[i * 3] += this.velocities[i].x;
+            positions[i * 3 + 1] += this.velocities[i].y;
+            positions[i * 3 + 2] += this.velocities[i].z;
 
-            if (particle.position.y > 3) {
+            this.lifetimes[i] += 0.008;
+
+            if (positions[i * 3 + 1] > 3.5 || this.lifetimes[i] > 1) {
                 const angle = Math.random() * Math.PI * 2;
-                const radius = 0.5 + Math.random() * 0.5;
-                particle.position.set(
-                    Math.cos(angle) * radius,
-                    0,
-                    Math.sin(angle) * radius
-                );
-                particle.userData.life = 0;
+                const radius = 0.5 + Math.random() * 1.5;
+                positions[i * 3] = Math.cos(angle) * radius;
+                positions[i * 3 + 1] = 0;
+                positions[i * 3 + 2] = Math.sin(angle) * radius;
+                this.lifetimes[i] = 0;
             }
+        }
 
-            particle.material.opacity = 0.6 * (1 - particle.userData.life % 1);
-        });
+        this.particles.geometry.attributes.position.needsUpdate = true;
     }
 }
 
-let character = new AntiMageCharacter(3);
-character.group.position.y = 0;
-scene.add(character.group);
+const magicParticles = new MagicParticles(150);
 
-const magicEffects = new MagicEffects();
-scene.add(magicEffects.group);
+// Character
+const character = new AntiMageCharacter(scene);
+character.playAnimation('idle');
 
-let autoRotate = true;
-let rotationSpeed = 0.5;
-let showEffects = true;
+// UI State
+let state = {
+    currentAnimation: 'idle',
+    showWireframe: false,
+    showSkeleton: false,
+    showParticles: true,
+    animationSpeed: 1.0,
+    autoRotate: false,
+    rotationSpeed: 0.3
+};
 
-document.getElementById('rotationSpeed').addEventListener('input', (e) => {
-    rotationSpeed = parseFloat(e.target.value);
+// UI Controls
+document.getElementById('animIdle').addEventListener('click', () => {
+    character.playAnimation('idle');
+    state.currentAnimation = 'idle';
+    updateAnimButtons();
 });
 
-document.getElementById('detailLevel').addEventListener('input', (e) => {
-    const level = parseInt(e.target.value);
-    scene.remove(character.group);
-    character = new AntiMageCharacter(level);
-    scene.add(character.group);
+document.getElementById('animRun').addEventListener('click', () => {
+    character.playAnimation('run');
+    state.currentAnimation = 'run';
+    updateAnimButtons();
 });
+
+document.getElementById('animAttack').addEventListener('click', () => {
+    character.playAnimation('attack');
+    state.currentAnimation = 'attack';
+    updateAnimButtons();
+});
+
+function updateAnimButtons() {
+    ['animIdle', 'animRun', 'animAttack'].forEach(id => {
+        document.getElementById(id).classList.remove('active');
+    });
+    const btnMap = {
+        'idle': 'animIdle',
+        'run': 'animRun',
+        'attack': 'animAttack'
+    };
+    document.getElementById(btnMap[state.currentAnimation]).classList.add('active');
+}
 
 document.getElementById('wireframe').addEventListener('change', (e) => {
-    character.group.traverse((child) => {
-        if (child.isMesh) {
-            child.material.wireframe = e.target.checked;
-        }
-    });
+    state.showWireframe = e.target.checked;
+    character.toggleWireframe(state.showWireframe);
+});
+
+document.getElementById('skeleton').addEventListener('change', (e) => {
+    state.showSkeleton = e.target.checked;
+    character.toggleSkeleton(state.showSkeleton);
+});
+
+document.getElementById('particles').addEventListener('change', (e) => {
+    state.showParticles = e.target.checked;
+    magicParticles.particles.visible = state.showParticles;
 });
 
 document.getElementById('autoRotate').addEventListener('change', (e) => {
-    autoRotate = e.target.checked;
+    state.autoRotate = e.target.checked;
+    controls.autoRotate = state.autoRotate;
+    controls.autoRotateSpeed = state.rotationSpeed;
 });
 
-document.getElementById('showEffects').addEventListener('change', (e) => {
-    showEffects = e.target.checked;
-    magicEffects.group.visible = showEffects;
+document.getElementById('animSpeed').addEventListener('input', (e) => {
+    state.animationSpeed = parseFloat(e.target.value);
+    character.setAnimationSpeed(state.animationSpeed);
+    document.getElementById('animSpeedValue').textContent = state.animationSpeed.toFixed(1);
 });
 
+document.getElementById('rotationSpeed').addEventListener('input', (e) => {
+    state.rotationSpeed = parseFloat(e.target.value);
+    controls.autoRotateSpeed = state.rotationSpeed;
+    document.getElementById('rotationSpeedValue').textContent = state.rotationSpeed.toFixed(1);
+});
+
+// Animation loop
+const clock = new THREE.Clock();
 document.getElementById('loading').style.display = 'none';
 
 function animate() {
     requestAnimationFrame(animate);
 
-    if (autoRotate) {
-        character.group.rotation.y += 0.01 * rotationSpeed;
-    }
+    const deltaTime = clock.getDelta();
 
-    character.update();
+    character.update(deltaTime);
 
-    if (showEffects) {
-        magicEffects.update();
+    if (state.showParticles) {
+        magicParticles.update();
     }
 
     controls.update();
-    renderer.render(scene, camera);
+    composer.render();
 }
 
+// Window resize
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth, window.innerHeight);
 });
 
 animate();
-    </script>
+
+
+</script>
 </body>
 </html>
